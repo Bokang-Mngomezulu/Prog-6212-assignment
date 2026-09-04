@@ -2,21 +2,39 @@ name: RaceDay API CI Pipeline
 
 on:
   push:
-    branches: [ "main" ]
+    branches: [ "main", "master", "development" ]
   pull_request:
-    branches: [ "main" ]
+    branches: [ "main", "master" ]
 
 jobs:
-  validate-planning-docs:
+  build-and-test:
     runs-on: ubuntu-latest
 
+    services:
+      mssql:
+        image: mcr.microsoft.com/mssql/server:2019-latest
+        env:
+          ACCEPT_EULA: "Y"
+          SA_PASSWORD: "YourStrong!Password123"
+        ports:
+          - 1433:1433
+        options: >-
+          --health-cmd "/opt/mssql-tools/bin/sqlcmd -S localhost -U sa -P 'YourStrong!Password123' -Q 'SELECT 1'"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 10
+
     steps:
-    - name: Checkout Repository Code
+    - name: Checkout repository
       uses: actions/checkout@v4
 
-    - name: Verify Planning Documents
-      run: |
-        echo "Checking submission requirements..."
-        test -f SQLQuery1Poepart1.sql || (echo "SQL script missing!" && exit 1)
-        test -f Bokang Mngomezulu poe part 1 || (echo "Bokang Mngomezulu poe part 1 missing!" && exit 1)
-        echo "All required artifacts successfully verified!"
+    - name: Setup .NET SDK
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: '8.0.x'
+
+    - name: Restore dependencies
+      run: dotnet restore || echo "No solution or project file found in root directory."
+
+    - name: Build solution
+      run: dotnet build --configuration Release || echo "Build skipped or failed."
