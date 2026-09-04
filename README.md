@@ -39,4 +39,4 @@ Below is the screenshot demonstrating the successful automated workflow executio
 
 Click the link below to watch the walkthrough demonstration of the system and API functionality:
 
-🔗 **[Watch the RaceDay System Demonstration on YouTube](https://www.youtube.com/watch?v=YOUR_VIDEO_ID_HERE)**
+🔗 **[Watch the RaceDay System Demonstration on YouTube]((https://youtu.be/ytMeWiWqZEI))**
