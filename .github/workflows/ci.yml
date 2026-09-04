@@ -10,8 +10,7 @@ jobs:
   build-and-test:
     runs-on: ubuntu-latest
 
-    services:
-      # Optional local SQL Server instance for database/integration tests
+services:
       mssql:
         image: mcr.microsoft.com/mssql/server:2022-latest
         env:
@@ -20,7 +19,7 @@ jobs:
         ports:
           - 1433:1433
         options: >-
-          --health-cmd "/opt/mssql-tools/bin/sqlcmd -S localhost -U sa -P 'YourStrong!Password123' -Q 'SELECT 1'"
+          --health-cmd "/opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P 'YourStrong!Password123' -C -Q 'SELECT 1'"
           --health-interval 10s
           --health-timeout 5s
           --health-retries 5
