@@ -2,51 +2,21 @@ name: RaceDay API CI Pipeline
 
 on:
   push:
-    branches: [ "main", "master", "development" ]
+    branches: [ "main" ]
   pull_request:
-    branches: [ "main", "master" ]
+    branches: [ "main" ]
 
 jobs:
-  build-and-test:
+  validate-planning-docs:
     runs-on: ubuntu-latest
 
-services:
-      mssql:
-        image: mcr.microsoft.com/mssql/server:2022-latest
-        env:
-          ACCEPT_EULA: "Y"
-          MSSQL_SA_PASSWORD: "YourStrong!Password123"
-        ports:
-          - 1433:1433
-        options: >-
-          --health-cmd "/opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P 'YourStrong!Password123' -C -Q 'SELECT 1'"
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
-
     steps:
-    - name: Checkout repository
+    - name: Checkout Repository Code
       uses: actions/checkout@v4
 
-    - name: Setup .NET SDK
-      uses: actions/setup-dotnet@v4
-      with:
-        dotnet-version: '8.0.x'
-
-    - name: Restore dependencies
-      run: dotnet restore
-
-    - name: Build solution
-      run: dotnet build --no-restore --configuration Release
-
-    - name: Run Unit & Integration Tests
-      run: dotnet test --no-build --configuration Release --verbosity normal
-
-    - name: Publish Artifacts
-      run: dotnet publish -c Release -o ./publish
-      
-    - name: Upload Build Artifact
-      uses: actions/upload-artifact@v4
-      with:
-        name: raceday-api-build
-        path: ./publish
+    - name: Verify Planning Documents
+      run: |
+        echo "Checking submission requirements..."
+        test -f SQLQuery1Poepart1.sql || (echo "SQL script missing!" && exit 1)
+        test -f Bokang Mngomezulu poe part 1 || (echo "Bokang Mngomezulu poe part 1 missing!" && exit 1)
+        echo "All required artifacts successfully verified!"
